@@ -81,7 +81,7 @@ public void init() {
 	+ gravity scale is basically a value that determine how fast the bird drop to the ground
 	+ the higher the value the faster the bird falls
 - **id**: contains the bird's id, and its neuralnetwork
-- **bird**: contains the bird "physical body" and some magical number
+- **bird**: contains the bird "physical body" and its score (the score which is suppose to be displayed on the screen)
 - **score**: a.k.a the finest function, basically a duration value, the longer the bird lives the better its performance is
 - **genbird()**: generate a population of birds
 - **findbest()**: find the best bird which is described in the general idea section
@@ -147,3 +147,72 @@ Since main.java **extends** ActionListener, it must has **actionPerformed()** bu
 		
 		
 	}
+````
+##### Varible description
+- **tick**: indicate how long has the game past
+
+##### Code explanation
+```java
+for(int i = 0;i < id.size();i++) {
+            if(!idx.contains(i)) 
+                score.set(i, tick);
+            if(tick % 2 == 0 && bird.get(i).getValue() < 15) 
+                gravScale.set(i, gravScale.get(i) + 2);
+            
+        }
+```
+Loop through all of the bird, set their score to the current time, also increase their gravity scale
+
+```java
+  Pipe closest = findClosest();
+  for(int i = 0;i < bird.size();i++) {
+       if(!idx.contains(i)) {
+            NeuralNetwork n = id.get(i).getKey();
+            n.update(bird.get(i).getKey(), closest, gravScale.get(i));
+            if(n.jumpornot()) moveUp(i);
+          }
+     }
+```
+In NeuralNetwork class we have a closest pipe value, so we update it here
+
+```java
+for(int i = 0;i < pipe.size();i++) {
+     Pipe p = this.pipe.get(i);
+     p.transLeft(speed);
+  }
+for(int i = 0;i < pipe.size();i++) {
+     Pipe p = pipe.get(i);
+     if(p.p1upx + p.w < 0) {
+          pipe.remove(p);
+          map.remove(p.id);
+          addPipe();
+      }
+  }
+```
+We move the pipe to the left, and check whether the pipe has got out of the screen or not, if so we just simply remove it, add one more
+```java
+for(Pipe p : pipe) {
+   for(int i = 0;i < bird.size();i++) {
+  	     Pair<Rectangle, Integer> b = bird.get(i);
+         if(idx.contains(i)) continue;
+         int t = inter(p, b.getKey());
+         if(t == -1) idx.add(i);
+         else {
+            b = new Pair<>(b.getKey(), b.getValue() + t);
+         }
+         cnt++;
+     }
+ }
+```
+We iterate all of the pipes and birds, check if they collide into each other or not, if so we just simply remove the bird from the game. Otherwise we add the score to the current bird, sometimes it is 0, sometimes it is 1 we will se in details in the **inter()** function.
+```java
+for(int i = 0;i < bird.size();i++) {
+			if(idx.contains(i)) continue;
+			addY(i, gravScale.get(i)); 
+		}
+if(idx.size() == bird.size()) stopGame();
+this.repaint();
+```
+We loop through all of the bird, if it still alive we add some gravitational force to it. And check if all the bird had died or not, then we will call the **stopGame()** function which is restart the training process.
+
+
