@@ -207,9 +207,9 @@ for(Pipe p : pipe) {
 We iterate all of the pipes and birds, check if they collide into each other or not, if so we just simply remove the bird from the game. Otherwise we add the score to the current bird, sometimes it is 0, sometimes it is 1 we will se in details in the **inter()** function.
 ```java
 for(int i = 0;i < bird.size();i++) {
-			if(idx.contains(i)) continue;
-			addY(i, gravScale.get(i)); 
-		}
+	if(idx.contains(i)) continue;
+	addY(i, gravScale.get(i)); 
+}
 if(idx.size() == bird.size()) stopGame();
 this.repaint();
 ```
